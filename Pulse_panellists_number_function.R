@@ -69,7 +69,7 @@ pulse_panellists_number<-function(start_date, end_dat){
   ## unique pmxids per device
    
   uk_desktop<-nrow(desktop_laptop_uk) 
-  uk_smatrphone<-nrow(unique(select((filter(mobile_tablet_uk, "device_kind=='mobile'")),pmxid)))
+  uk_smatrphone<-nrow(unique(select((filter(mobile_tablet_uk, device_kind=='mobile')),pmxid)))
   uk_smatrphone_ios<-nrow(unique(select((filter(mobile_tablet_uk, device_kind=='mobile'& device_os == 'ios')),pmxid)))
   uk_smatrphone_android<-nrow(unique(select((filter(mobile_tablet_uk, device_kind=='mobile'& device_os == 'android')),pmxid)))
   
