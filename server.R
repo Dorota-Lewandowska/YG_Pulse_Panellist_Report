@@ -6,12 +6,12 @@ library(diur)
 library(reshape)
 library(DT)
 
-pulse_panellists_number<-function(start_date, end_dat){
+pulse_panellists_number<-function(start_date, end_dat, panel){
   ## connect to redshift
   db <- rs_dplyr()
   ##List of UK panelists
   uk_pmxids <- tbl(db,"pmxdb_panelmemberships_emea") %>%    
-    filter(panelid==13) %>%     
+    filter(panelid==panel) %>%     
     select (id)  %>%  
     distinct %>%
     collect %>%                                         
@@ -70,11 +70,17 @@ pulse_panellists_number<-function(start_date, end_dat){
   desk_smar_tab<-inner_join(desktop_laptop_uk, tablet_pmxid, by = "pmxid", copy=TRUE)
   desk_smar_tab<-inner_join(desk_smar_tab, smartphone_pmxid, by = "pmxid", copy = TRUE)
   desk_smar_tab<-nrow(desk_smar_tab)
+  
+  ###name of the panel
+  panel_name_of<-""
+  if (panel==4) {panel_name_of <-"GERMAN PANEL"}
+  else if (panel==13) {panel_name_of <- "UK PANEL"}
+  
   ###Insert the output into data table
-  names <- c("Start date", "End date","Total panel", "Desktop", "Smartphone", 
+  names <- c(panel_name_of, "Start date", "End date","Total panel", "Desktop", "Smartphone", 
              "Smartphone Android", "Smartphone ios","Tablet", "Tablet Android", "Tablet ios", "CROSSOVER", "Desktop + Smartphone",
              "Desktop + Tablet", "Smartphone + Tablet", "Desktop + Smartphone + Tablet")
-  figures<-c(as.character(start_date), as.character(end_dat), total_panel, uk_desktop, uk_smatrphone, uk_smatrphone_android, uk_smatrphone_ios,
+  figures<-c(" ", as.character(start_date), as.character(end_dat), total_panel, uk_desktop, uk_smatrphone, uk_smatrphone_android, uk_smatrphone_ios,
              uk_tablet, uk_tablet_andr, uk_tablet_ios, "  ", desk_and_smar, desk_and_tab, smart_and_tab, desk_smar_tab)
   output_data<-as.data.frame(cbind(names, figures))
   colnames(output_data)<-NULL
@@ -89,7 +95,7 @@ shinyServer(function(input, output, session) {
       need(as.Date(input$start_date) <= as.Date(input$end_dat), "Start Date should not be older than End Date!!")
     )
   
-    pulse_panellists_number(input$start_date,input$end_dat)})
+    pulse_panellists_number(input$start_date,input$end_dat, input$panel)})
   
   output$table <-DT::renderDataTable(datatable(
     data_funct(), filter = "top",  

@@ -32,13 +32,19 @@ shinyUI(fluidPage(
     
     
     # Select input
-    dateInput(inputId = "start_date", "Choose start date", value = max_date, min = "2013-09-10",
+    dateInput(inputId = "start_date", "Choose start date:", value = max_date, min = "2013-09-10",
               max = max_date, format = "yyyy-mm-dd", startview = "month",
               weekstart = 0, language = "en"),
     
-    dateInput(inputId = "end_dat", "Choose end date", value = max_date, min = "2013-09-10",
+    dateInput(inputId = "end_dat", "Choose end date:", value = max_date, min = "2013-09-10",
               max = max_date, format = "yyyy-mm-dd", startview = "month",
               weekstart = 0, language = "en"),
+    tags$hr(),
+    
+    radioButtons("panel", "Choose panel:",
+                 c("UK" = 13,
+                   "German" = 4
+), ),
     tags$hr(),
     
     actionButton("goButton", "Go!"),
