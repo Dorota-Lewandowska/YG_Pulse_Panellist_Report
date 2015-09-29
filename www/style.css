@@ -1,11 +1,11 @@
 div.busy { 
   position:absolute;
-  top: 5%;
+  top: 0%;
   left: 5%;
   margin-top: 0px;
   margin-left: 95px;
   display:none;
-  background: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, 1);
   text-align: center;
   height: 10px;
   padding-top: 2px;

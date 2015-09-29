@@ -89,17 +89,23 @@ pulse_panellists_number<-function(start_date, end_dat, panel){
 }
 
 shinyServer(function(input, output, session) {
+  
+  observeEvent(input$goButton, {
+    enable("downloadData")
+  })
+  
+  
   data_funct<-eventReactive(input$goButton, {
     
     validate(
       need(as.Date(input$start_date) <= as.Date(input$end_dat), "Start Date should not be older than End Date!!")
     )
-  
+    
     pulse_panellists_number(input$start_date,input$end_dat, input$panel)})
   
   output$table <-DT::renderDataTable(datatable(
     data_funct(), filter = "top",  
-    options = list(pageLength = 15, autoWidth = TRUE, lengthMenu = c(5, 10, 15)),
+    options = list(pageLength = 16, autoWidth = TRUE, lengthMenu = c(5, 10, 16)),
     rownames= FALSE
   ))
   
@@ -111,7 +117,3 @@ shinyServer(function(input, output, session) {
     }
   )
 }) 
-
-
-
-    

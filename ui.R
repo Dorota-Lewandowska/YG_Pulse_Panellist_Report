@@ -7,7 +7,8 @@ library(tidyr)
 library(diur)
 library(reshape)
 library(DT)
- 
+library(shinyjs)
+
 db <- rs_dplyr()        ####or to run stuff quicker it can be hardcoded - e.g. sysDate - 2
 max_date<-tbl(db,"wakoopa_emea_web_sessions") %>%
   summarise(mindate=max(used_at)) %>%
@@ -21,34 +22,36 @@ max_date<-as.character(max_date)
 
 # Define UI for application 
 shinyUI(fluidPage(
-   
+  
   sidebarPanel(
-      
+    
     ##logo
     tags$img(height=30, width=300, 
              src = "http://cdn.yougov.com/cumulus_uploads/document/d7d2l9gywe/YGV-Pulse.png"),
     # Application title
+    tags$br(),
     titlePanel("Panellist Report"),
-    
+    tags$hr(),
     
     # Select input
-    dateInput(inputId = "start_date", "Choose start date:", value = max_date, min = "2013-09-10",
+    dateInput(inputId = "start_date", "Start date", value = max_date, min = "2013-09-10",
               max = max_date, format = "yyyy-mm-dd", startview = "month",
               weekstart = 0, language = "en"),
     
-    dateInput(inputId = "end_dat", "Choose end date:", value = max_date, min = "2013-09-10",
+    dateInput(inputId = "end_dat", "End date", value = max_date, min = "2013-09-10",
               max = max_date, format = "yyyy-mm-dd", startview = "month",
               weekstart = 0, language = "en"),
     tags$hr(),
     
-    radioButtons("panel", "Choose panel:",
+    radioButtons("panel", "Panel:",
                  c("UK" = 13,
                    "German" = 4
-), ),
+                 ), ),
     tags$hr(),
     
-    actionButton("goButton", "Go!"),
-    p("Click the Go! button to generate the report")
+    useShinyjs(),
+    actionButton("goButton", "Generate report"),
+    disabled(downloadButton('downloadData', 'Download'))
     
   ),
   
@@ -57,7 +60,6 @@ shinyUI(fluidPage(
         img(height=120, width=600,src="http://www.barchart.com/shared/images/progress_bar.gif")
     ),
     
-    tags$h4 ("Preview:"),
     ## loading msg
     tagList(
       tags$head(
@@ -67,10 +69,10 @@ shinyUI(fluidPage(
     ),
     tags$br(),
     tags$br(),
+    tags$br(),
     
-    div(DT::dataTableOutput("table"), style = "font-size:75%"),
+    div(DT::dataTableOutput("table"), style = "font-size:75%")
     
-    downloadButton('downloadData', 'Download')
+
   )
 ))
-
