@@ -30,7 +30,7 @@ pulse_panellists_number<-function(start_date, end_dat, panel){
     data.table
   ##please note this has to be rune separately (the number of uk pmxids is very large, and that is not enought memory if you try to filter by uk pmxids in the query above)
   desktop_laptop_uk<-inner_join(desktop_laptop_emea, uk_pmxids, by="pmxid") 
-  ###Select pmxid, device id for mobiles/tables and then match device_os and device_kind
+  ###Select pmxid, device id for mobiles/tables (websites)and then match device_os and device_kind
   mobile_tablet_emea <- tbl(db,"wakoopa_emea_web_sessions") %>%    
     filter(used_at >= start_date) %>%                  
     filter(used_at < end_date) %>%     
@@ -48,6 +48,27 @@ pulse_panellists_number<-function(start_date, end_dat, panel){
     data.table
   mobile_tablet_uk<-left_join(mobile_tablet_uk, mob_tab_extra_data, by = "device_id")
   mobile_tablet_uk<-select (mobile_tablet_uk, pmxid, device_os, device_kind )
+  ###Select pmxid, device id for mobiles/tables (apps) and then match device_os and device_kind CHECK!!!!!!!!!!!!!!!!!!!!!
+  mobile_tablet_emea_app <- tbl(db,"wakoopa_emea_app_sessions") %>%    
+    filter(used_at >= start_date) %>%                  
+    filter(used_at < end_date) %>%     
+    select (pmxid, device_id)  %>%    
+    distinct %>%
+    collect %>%                                         
+    data.table
+  mobile_tablet_uk_app<-inner_join(mobile_tablet_emea_app, uk_pmxids, by="pmxid")
+  mob_tab_deviceid_app<-as.vector(mobile_tablet_uk_app$device_id)
+  mob_tab_extra_data_app<-tbl(db,"wakoopa_emea_device_metadata") %>%  
+    filter(device_id %in% mob_tab_deviceid_app) %>% 
+    select (device_id, device_os, device_kind) %>%
+    distinct %>%
+    collect %>%                                         
+    data.table
+  mobile_tablet_uk_app<-left_join(mobile_tablet_uk_app, mob_tab_extra_data_app, by = "device_id")
+  mobile_tablet_uk_app<-select (mobile_tablet_uk_app, pmxid, device_os, device_kind ) 
+  ##Merge tablets/mobiles apps and websites into a single table  !!!!!!!!!!!!!!!!!!!!!!!!!!!CHECK
+  mobile_tablet_uk<- rbind(mobile_tablet_uk, mobile_tablet_uk_app)
+  mobile_tablet_uk<-unique(mobile_tablet_uk)
   #########Calculate numbers
   ## unique pmxids per device
   uk_desktop<-nrow(desktop_laptop_uk) 
