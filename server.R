@@ -99,7 +99,7 @@ pulse_panellists_number<-function(start_date, end_dat, panel){
   
   ###Insert the output into data table
   names <- c(panel_name_of, "Start date", "End date","Total panel", "Desktop", "Smartphone", 
-             "Smartphone Android", "Smartphone ios","Tablet", "Tablet Android", "Tablet ios", "CROSSOVER", "Desktop + Smartphone",
+             "         Smartphone Android", "Smartphone ios","Tablet", "Tablet Android", "Tablet ios", "CROSSOVER", "Desktop + Smartphone",
              "Desktop + Tablet", "Smartphone + Tablet", "Desktop + Smartphone + Tablet")
   figures<-c(" ", as.character(start_date), as.character(end_dat), total_panel, uk_desktop, uk_smatrphone, uk_smatrphone_android, uk_smatrphone_ios,
              uk_tablet, uk_tablet_andr, uk_tablet_ios, "  ", desk_and_smar, desk_and_tab, smart_and_tab, desk_smar_tab)
